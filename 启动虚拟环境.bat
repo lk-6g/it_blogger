@@ -1,0 +1,1 @@
+cmd /k ll_env\Scripts\activate

@@ -1,0 +1,43 @@
+{% load staticfiles %}
+{% load notifications_tags %}
+{% notifications_unread as unread_count %}
+{% load my_filters_and_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>IT Blogger</title>
+    <link rel="icon" type="image/x-icon" href="/static/images/IB.ico">
+
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/static/js/myjs.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/mystyle.css">
+  </head>
+  
+  <body>
+  	{% include './header.html' %}
+    
+    <div class="container">
+      <div>
+        {% block header %}{% endblock header %}
+      </div>
+      <div>
+        {% block content %}{% endblock content %}
+      </div>
+    </div>
+    
+    {% include './footer.html' %}
+    
+    <div>
+      {% block script %}{% endblock script %}
+    </div>
+    <script src="{% static 'js/myjs-foot.js' %}"></script>
+    <script src="/static/js/layer/layer.js"></script>
+  </body>
+</html>

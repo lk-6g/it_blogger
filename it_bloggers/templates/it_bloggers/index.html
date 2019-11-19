@@ -1,0 +1,215 @@
+{% extends "it_bloggers/base.html" %}
+{% load my_filters_and_tags %}
+
+{% block content %}
+<div class="row">
+<div class="col-md-9" style="margin-top:20px">
+<div class="row mt-2">
+  <div class="row">
+    <div class="col-md-8">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a id="order_date" href="/?topic_id={{ topic.id }}&tag={{ tag }}&search={{ search }}">最新</a>
+              <!-- topic.id不等于all，因为all不是topic的id属性的值，所以只能从URL传入views，再由
+              views通过context传入topic_id，URL中直接赋值all，不是通过{{ topic.id }}-->
+            </li>
+            <li class="breadcrumb-item">
+              <a id="order_hot" href="/?topic_id={{ topic.id }}&order=read_count&tag={{ tag }}&search={{ search }}"> 最热</a>
+            </li>
+          </ol>
+        </nav>
+    </div>
+    <div class="col-md-4">
+      <!-- 搜索栏 -->
+      <div class="col-auto mr-auto">
+          <form class="form-inline">
+            <label class="sr-only">content</label>
+            <input type="text" class="form-control search_icon" name="search"
+              placeholder="搜索文章..." style="width:100%" required>
+          </form>
+      </div>
+    </div>
+  </div>
+    
+  <!-- 搜索提示语 -->
+  {% if search %}
+    {% if entries %}
+      <h4 style="background:rgba(0,0,0,0.05); padding:10px; border-radius:5px">关键词<span style="color: red">"{{ search }}"</span>的搜索结果如下：<a href="/">撤销搜索</a></h4>
+        <hr>        
+    {% else %}
+      <h4 style="background:rgba(0,0,0,0.05); padding:10px; border-radius:5px">暂无关键词<span style="color: red">"{{ search }}"</span>有关的文章。<a href="/">撤销搜索</a></h4>
+        <hr>
+    {% endif %}
+  {% endif %}
+  
+  <!-- 标签筛选提示语 -->
+  {% if tag %}
+    {% if entries %}
+      <h4 style="background:rgba(0,0,0,0.05); padding:10px; border-radius:5px">标签<span style="color: red">"{{ tag }}"</span>的筛选结果如下：<a href="/">撤销筛选</a></h4>
+        <hr>        
+    {% else %}
+      <h4 style="background:rgba(0,0,0,0.05); padding:10px; border-radius:5px">暂无标签<span style="color: red">"{{ tag }}"</span>有关的文章。<a href="/">撤销筛选</a></h4>
+        <hr>
+    {% endif %}
+  {% endif %}
+  
+    <!-- 主题筛选提示语 -->
+  {% if topic %}
+    {% if entries %}
+      <h4 style="background:rgba(0,0,0,0.05); padding:10px; border-radius:5px">主题<span style="color: red">"{{ topic }}"</span>的筛选结果如下：<a href="/">撤销筛选</a></h4>
+        <hr>        
+    {% else %}
+      <h4 style="background:rgba(0,0,0,0.05); padding:10px; border-radius:5px">暂无主题<span style="color: red">"{{ topic }}"</span>有关的文章。<a href="/">撤销筛选</a></h4>
+        <hr>
+    {% endif %}
+  {% endif %}
+</div>
+  
+
+  {% for entry in entries %}
+  <div class="row mt-2 box_a">
+    <!-- 标题图 -->
+    <div class="col-md-3" style="padding-left:0px">
+    <a href="{% url 'it_bloggers:entry' entry.id %}" target="_blank" style="color: black">
+    {% if entry.picture %}
+      <img src="{{ entry.picture.url }}" alt="picture" class="ani_img">
+    {% else %}
+      <img src="/static/images/IT_Blogger.png" alt="picture" class="ani_img_def">
+    {% endif %}
+    </a>
+    </div>
+    <div class="col-md-9" style="padding:0px">
+      <p>
+      <!-- 主题 -->
+      <a href="/?topic_id={{ entry.topic.id }}" class="badge ani_b" style="line-height: 1.5; border-radius: 15px">
+      {{ entry.topic.text|max_len:'20' }}</a>
+      <!-- 标签 -->
+      {% for tag in entry.tags.all %}
+        <a href="/?tag={{ tag }}" class="badge ani_c" style="background:line-height: 0.9; border-radius: 9px; font-weight:500">
+        {{ tag.name|max_len:'15' }}</a>
+      {% endfor %}
+      </p>
+      <!-- 文章标题 -->
+      <h4><b>
+        <a class="ani_a" href="{% url 'it_bloggers:entry' entry.id %}" target="_blank" style="color: black">
+        {{ entry.title|max_len:'30' }}</a>
+      </b></h4>
+      <!-- 文章摘要 -->
+      <p><small style="color: gray;">{{ entry.text|max_len:'100'|transferImg|transferCode|safe }}</small></p>
+      <!-- 注脚 -->
+      <table style="width:100%"><tr>
+        <td>
+          <a href="/visitor/{{ entry.owner.id }}/" target="_blank" style="text-decoration:none">
+            {% if entry.owner.profile.avatar %}
+            <img src="{{ entry.owner.profile.avatar.url }}" alt="picture" style="max-width:30px; max-height:30px; border-radius: 50%">
+            {% else %}
+            <img src="/static/images/default_avatar.png" alt="picture" style="max-width:30px; max-height:30px; border-radius: 50%">
+            {% endif %}
+            <span style="color: red;">{{ entry.owner }} </span>
+          </a>
+        </td>
+        <td>
+          <span style="color: green;"><i class="glyphicon glyphicon-eye-open"></i>
+          {{ entry.read_count }}</span>
+        </td>
+        <td>
+          <span style="color: blue;"><i class="glyphicon glyphicon-comment"></i>
+          {{ entry.comments.count }}</span>
+        </td>
+        <td>
+          <span style="color: red;"><i class="glyphicon glyphicon-heart"></i>
+          {{ entry.likes }}</span>
+        </td>
+        <td>
+          <span style="color: darkred;"><i class="glyphicon glyphicon-time"></i>
+          {{ entry.date_added|time_since_zh }} <i>发布</i></span>
+        </td>
+        <td>
+          <span style="color: DarkOrange;"><i class="glyphicon glyphicon-refresh"></i>
+          {{ entry.date_updated|time_since_zh }} <i>更新</i></span>
+        </td>
+      </tr></table>
+      </p>
+    </div>
+  </div>
+
+  {% endfor %}
+  
+  <!-- 页码 -->
+  <div style="text-align: center;">
+    <ul class="pagination">
+      {% if entries.has_previous %}
+        <li><a href="?order={{ order }}&topic_id={{ topic.id }}&tag={{ tag }}&search={{ search }}&page=1">&laquo;</a></li>
+        <li><a href="?order={{ order }}&topic_id={{ topic.id }}&tag={{ tag }}&search={{ search }}&page={{ entries.previous_page_number }}">&lt;</a></li>
+      {% endif %}
+      {% if entries.previous_page_number|minus:"1" >= 1 %}
+        <li><a href="?order={{ order }}&topic_id={{ topic.id }}&tag={{ tag }}&search={{ search }}&page={{ entries.previous_page_number|minus:'1' }}">{{ entries.previous_page_number|minus:"1" }}</a></li>
+      {% endif %}
+      {% if entries.has_previous %}
+        <li><a href="?order={{ order }}&topic_id={{ topic.id }}&tag={{ tag }}&search={{ search }}&page={{ entries.previous_page_number }}">{{ entries.previous_page_number }}</a></li>
+      {% endif %}
+      <li class="active"><a>{{ entries.number }}</a></li>
+      {% if entries.has_next %}
+        <li><a href="?order={{ order }}&topic_id={{ topic.id }}&tag={{ tag }}&search={{ search }}&page={{ entries.next_page_number }}">{{ entries.next_page_number }}</a></li>
+      {% endif %}
+      {% if entries.next_page_number|add:"1" <= entries.paginator.num_pages %}
+        <li><a href="?order={{ order }}&topic_id={{ topic.id }}&tag={{ tag }}&search={{ search }}&page={{ entries.next_page_number|add:'1' }}">{{ entries.next_page_number|add:"1" }}</a></li>
+      {% endif %}
+      {% if entries.has_next %}
+        <li><a href="?order={{ order }}&topic_id={{ topic.id }}&tag={{ tag }}&search={{ search }}&page={{ entries.next_page_number }}">&gt;</a></li>
+        <li><a href="?order={{ order }}&topic_id={{ topic.id }}&tag={{ tag }}&search={{ search }}&page={{ entries.paginator.num_pages }}">&raquo;</a></li>
+      {% endif %}
+    </ul>
+  </div>
+  </div>
+  <div class="col-md-3" style="margin-top:20px">
+    <div class="box_a">
+      <p style="color:CornflowerBlue">公告</p>
+      <p><li>本站是个人兴趣开发的小站，有编写博客文章的基本功能，如果您在使用过程中遇到问题，可以通过邮箱反馈博主，本人定会第一时间回复，感谢使用</li></p>
+    </div>
+    <div class="box_a">
+      <p style="color:CornflowerBlue">热门文章</p>
+      {% for hot_entry in hot_entries %}
+      <p><li>
+        <a class="ani_a" href="/entry/{{ hot_entry.id }}/" target="_blank" style="color: black">{{ hot_entry.title|max_len:'20' }}</a>
+        <i class="glyphicon glyphicon-fire" style="color:Crimson; float:right"></i>
+      </li></p>
+      {% endfor %}
+    </div>
+    <div class="box_a">
+      <p style="color:CornflowerBlue">热词检索<img style="float:right" src="/static/images/bookmark.png" alt="bookmark"></p>
+      <p style="line-height: 2">
+        <a class="badge ani_b" href="/?search=html">HTML</a>
+        <a class="badge ani_b" href="/?search=css">CSS</a>
+        <a class="badge ani_b" href="/?search=javascript">Javascript</a>
+        <a class="badge ani_b" href="/?search=jquery">jQuery</a>
+        <a class="badge ani_b" href="/?search=python">Python</a>
+        <a class="badge ani_b" href="/?search=django">Django</a>
+        <a class="badge ani_b" href="/?search=bootstrap">Bootstrap</a>
+        <a class="badge ani_b" href="/?search=vue">Vue</a>
+        <a class="badge ani_b" href="/?search=angularjs">AngularJS</a>
+        <a class="badge ani_b" href="/?search=react">React</a>
+      </p>
+    </div>
+    <div class="box_a">
+      <p style="color:CornflowerBlue">交流互动</p>
+      <p><img src="/static/images/wx.png" alt="wx"> ：gg-8000</p>
+      <p><img src="/static/images/email.png" alt="email"> ：lk6g@foxmail.com</p>
+      <p>{{ superuser }}</p>
+     </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    $("#nav1").css({"color":"white", "background":"rgba(119,136,153,0.5)"})
+    //最新、最热背景色
+  	{% if order %}
+    $("#order_hot").css({"color":"black", "background":"rgba(0,0,0,0.1)", "border-radius":"50%"})
+	{% else %}
+    $("#order_date").css({"color":"black", "background":"rgba(0,0,0,0.1)", "border-radius":"50%"})
+  	{% endif %}
+</script>
+{% endblock script %}

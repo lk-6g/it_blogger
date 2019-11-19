@@ -1,0 +1,61 @@
+{% extends "it_bloggers/base.html" %}
+{% load my_filters_and_tags %}
+
+{% block header %}
+<div class="page-header">
+  <ul class="breadcrumb" style="background:rgba(0,0,0,0.1); margin:10px 20px; padding:10px; border-radius:20px">
+    <span>当前位置：</span>
+    <li><a href="/homepage/">主页</a></li>
+    <li><a href="/topics/">主题</a></li>
+    <li class="active">
+    {% if topic %}主题：{{topic.text|slice:'60' }}{% else %}所有文章{% endif %}
+    </li>
+  </ul>
+</div>
+{% endblock header %}
+
+{% block content %}
+<div class="row">
+<div class="col-md-2">
+  <ul class="nav nav-pills nav-stacked box_c">
+    <li><a style="background-color:LightBlue ; color: black;" href="/entries/">全部</a></li>
+    {% for topic in topics %}
+      <li><a id={{ topic.id }} href="/entries/?topic_id={{ topic.id }}">{{ topic.text|max_len:'15' }}</a></li>
+    {% endfor %}
+    <li><a onclick="new_topic()" style="cursor:pointer">新增</a></li>
+  </ul>
+</div>
+<div class="col-md-10">
+  {% if topic.id != "None" %}
+    <div id="t1" lang="{{ topic.id }}">
+      {% include './entries_content.html' %}
+    </div>
+  {% else %}
+    <div id="t1">
+      {% include './entries_content.html' %}
+    </div>
+  {% endif %}
+</div>
+</div>
+{% endblock content %}
+
+{% block script %}
+  <script>
+  	document.title="IT Blogger-管理文章"
+  	//导航栏选中变色
+  	$("#nav3").css({"color":"white"})
+  	
+  	//最新、最热背景色
+  	{% if order %}
+    $("#order_hot").css({"color":"black", "background":"rgba(0,0,0,0.1)", "border-radius":"50%"})
+	{% else %}
+    $("#order_date").css({"color":"black", "background":"rgba(0,0,0,0.1)", "border-radius":"50%"})
+  	{% endif %}
+  	
+	//条目页面侧边栏选中变色
+	//这段js需放后面，因为这段代码如果执行失败，会阻碍后续代码执行
+	var topicId = document.getElementById("t1").lang;
+	document.getElementById(topicId).style.background = "LightSteelBlue";
+	document.getElementById(topicId).style.color = "white";
+  </script>
+{% endblock script %}

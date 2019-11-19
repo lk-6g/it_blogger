@@ -1,0 +1,51 @@
+{% extends "it_bloggers/base.html" %}
+
+{% block header %}
+  <h2>用户信息</h2>
+{% endblock header %}
+
+{% block content %}
+<div class="container">
+  <br>
+  <div class="box_a"><b>用户名:</b> {{ user.username }}</div>
+  <br>
+  <form method="post" action="." enctype="multipart/form-data">
+    {% csrf_token %}
+    <!-- avatar -->
+    <div class="form-group box_a">
+      <label for="avatar">用户头像</label>
+      {% if profile.avatar %}
+      <div>
+        <img src="{{ profile.avatar.url }}" style="max-width: 10%;">
+      </div>
+      {% else %}
+      <div>
+        <img src="/static/images/default_avatar.png" style="max-width: 10%;">
+      </div>
+      {% endif %}
+      <br>
+      <input type="file" class="form-control-file" name="avatar" id="avatar">
+    </div>
+    <!-- phone -->
+    <div class="form-group box_a">
+    <label for="phone">电话</label>
+      <input type="text" class="form-control" id="phone" name="phone" value="{{ profile.phone }}">
+    </div>
+    <!-- bio -->
+    <div class="form-group box_a">
+      <label for="bio">个性签名</label>
+      <textarea type="text" class="form-control" id="bio" name="bio" rows="12">{{ profile.bio }}</textarea>
+    </div>
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary">提交</button>
+    </div>
+  </form>
+</div>
+{% endblock content %}
+
+{% block script %}
+  <script>
+  	document.title="IT Blogger-个人信息"
+    $("#nav5").css({"color":"white"})
+  </script>
+{% endblock script %}

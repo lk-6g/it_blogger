@@ -1,0 +1,122 @@
+{% load my_filters_and_tags %}
+
+  <table width="100%" border="0">
+    <tr>
+      <td width="74%">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a id="order_date" href="/entries/?topic_id={{ topic.id }}&search={{ search }}">最新</a>
+              <!-- topic.id不等于all，因为all不是topic的id属性的值，所以只能从URL传入views，再由
+              views通过context传入topic_id，URL中直接赋值all，不是通过{{ topic.id }}-->
+            </li>
+            <li class="breadcrumb-item">
+              <a id="order_hot" href="/entries/?topic_id={{ topic.id }}&search={{ search }}&order=read_count"> 最热</a>
+            </li>
+          </ol>
+        </nav>
+      </td>
+      
+      <td width="1%"></td>
+      
+      <td width="25%">
+        <!-- 搜索栏 -->
+        <div class="col-auto mr-auto" style="margin-top:-20px">
+          <form class="form-inline">
+            <label class="sr-only">content</label>
+              <input type="text" class="form-control search_icon" name="search"
+              placeholder="搜索文章..." style="width:100%" required>
+            </form>
+        </div>
+      </td>
+    </tr>
+  </table>
+    
+  <!-- 新增，搜索提示语 -->
+  {% if search %}
+    {% if entries %}
+      <h4 style="background:rgba(0,0,0,0.05); padding:10px; border-radius:5px"><span style="color: red">"{{ search }}"</span>的搜索结果如下：<a href="/entries/">撤销搜索</a></h4>
+        <hr>        
+    {% else %}
+      <h4 style="background:rgba(0,0,0,0.05); padding:10px; border-radius:5px">暂无<span style="color: red">"{{ search }}"</span>有关的文章。<a href="/entries/">撤销搜索</a></h4>
+        <hr>
+    {% endif %}
+  {% endif %}
+  
+  <table class="table table-hover">
+    {% for entry in entries %}
+      <tr>
+        <th>
+          <h4>
+            <a href="/entry/{{ entry.id }}/" target="_blank">{{ entry.title|max_len:'20' }}</a>
+          </h4>
+        </th>
+        <th>
+          <small class="col align-self-end" style="color: gray;">浏览: {{ entry.read_count }}&nbsp;&nbsp;&nbsp;</small>
+        </th>
+        <th>
+          <small class="col align-self-end" style="color: gray;">评论: {{ entry.comments.count }}&nbsp;&nbsp;&nbsp;</small>
+        </th>
+        <th>
+          <small class="col align-self-end" style="color: gray;">喜欢: {{ entry.likes }}&nbsp;&nbsp;&nbsp;</small>
+        </th>
+        <th>
+          <small class="col align-self-end" style="color: gray; float:right">{{ entry.date_updated|date:'Y-m-d' }}&nbsp;&nbsp;&nbsp;</small>
+        </th>
+        <th>
+          <div class="mytooltip" style="font-size:15px">
+            <div class="myicon glyphicon glyphicon-edit"
+            onclick='window.open("{% url 'it_bloggers:edit_entry' entry.id %}")'>
+            </div>&nbsp;&nbsp;&nbsp;
+                <span class="mytooltiptext">编辑</span>
+          </div>
+        </th>
+        <th>
+          <div class="mytooltip" style="font-size:15px">
+            <div id="del_out" class="myicon glyphicon glyphicon-trash"
+            onclick="confirm_dele(this, {{ entry.id }}, '{{ entry.title|max_len:'10' }}')">
+            </div>&nbsp;&nbsp;&nbsp;
+              <span class="mytooltiptext">删除</span>
+          </div>
+        </th>
+        <td style="padding-top:15px">
+          <input style="float:right; margin:-3px 15px 0 0" type="checkbox" name="cb" id={{ entry.id }}>
+        </td>
+      </tr>
+    {% empty %}
+      <p style="text-align:center">空空如也！</p>
+    {% endfor %}
+  </table>
+  
+  <p style="float:right">
+    <button class="btn btn-xs btn-info" onclick="all_check()">全选/清空</button>
+    <button class="btn btn-xs btn-info" onclick="re_check()">反选</button>
+    <button class="btn btn-xs btn-info" id="b1" onclick="confirm_delse()">删除</button>
+  </p>
+  
+  <!-- 页码 -->
+  <div style="text-align: center;">
+    <ul class="pagination">
+      {% if entries.has_previous %}
+        <li><a href="?order={{ order }}&topic_id={{ topic.id }}&tag={{ tag }}&search={{ search }}&page=1">&laquo;</a></li>
+        <li><a href="?order={{ order }}&topic_id={{ topic.id }}&tag={{ tag }}&search={{ search }}&page={{ entries.previous_page_number }}">&lt;</a></li>
+      {% endif %}
+      {% if entries.previous_page_number|minus:"1" >= 1 %}
+        <li><a href="?order={{ order }}&topic_id={{ topic.id }}&tag={{ tag }}&search={{ search }}&page={{ entries.previous_page_number|minus:'1' }}">{{ entries.previous_page_number|minus:"1" }}</a></li>
+      {% endif %}
+      {% if entries.has_previous %}
+        <li><a href="?order={{ order }}&topic_id={{ topic.id }}&tag={{ tag }}&search={{ search }}&page={{ entries.previous_page_number }}">{{ entries.previous_page_number }}</a></li>
+      {% endif %}
+      <li class="active"><a>{{ entries.number }}</a></li>
+      {% if entries.has_next %}
+        <li><a href="?order={{ order }}&topic_id={{ topic.id }}&tag={{ tag }}&search={{ search }}&page={{ entries.next_page_number }}">{{ entries.next_page_number }}</a></li>
+      {% endif %}
+      {% if entries.next_page_number|add:"1" <= entries.paginator.num_pages %}
+        <li><a href="?order={{ order }}&topic_id={{ topic.id }}&tag={{ tag }}&search={{ search }}&page={{ entries.next_page_number|add:'1' }}">{{ entries.next_page_number|add:"1" }}</a></li>
+      {% endif %}
+      {% if entries.has_next %}
+        <li><a href="?order={{ order }}&topic_id={{ topic.id }}&tag={{ tag }}&search={{ search }}&page={{ entries.next_page_number }}">&gt;</a></li>
+        <li><a href="?order={{ order }}&topic_id={{ topic.id }}&tag={{ tag }}&search={{ search }}&page={{ entries.paginator.num_pages }}">&raquo;</a></li>
+      {% endif %}
+    </ul>
+  </div>

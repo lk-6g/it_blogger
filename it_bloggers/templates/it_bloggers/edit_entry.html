@@ -1,0 +1,71 @@
+{% extends "it_bloggers/base.html" %}
+
+{% block header %}
+<div class="page-header">
+  <h2>修改文章</h2>
+</div>
+{% endblock header %}
+
+{% block content %}
+<div class="row">
+  <form active="{% url 'it_bloggers:edit_entry' entry.id %}" method='post' class="form" enctype="multipart/form-data">
+    {% csrf_token %}
+  <div class="col-md-3">
+    <div class="form-group box_d">
+      <label for="topic_of_entry">所属主题：<i class="myicon glyphicon glyphicon-plus" style="margin-left:10px" onclick="new_topic()">新增</i></label>
+      <select class="form-control" id="topic_of_entry" name="topic">
+        <option value="none">请选择主题..</option>
+        {% for topic in topics %}
+          <option value="{{ topic.id }}"
+          {% if topic.id == entry.topic.id %}
+            selected
+          {% endif %}>{{ topic }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    
+    <!-- 文章标签 -->
+    <div class="form-group box_d">
+      <label for="tags">标签</label>
+      <input type="text" class="form-control col-3" id="tags" name="tags" placeholder="请输入标签.." value="{{ tags }}">
+      <small class="help-block">如要设置多个标签，请以<span style="color: red"> ‘ 空格 ’ </span>或者<span style="color: red"> ‘ 英文逗号 ’ </span>分隔</small>
+    </div>
+    
+    <!-- 文章标题图 -->
+    <div class="form-group box_d">
+      <!-- 标题图 -->
+      <label for="picture">标题图</label>
+      <input type="file" class="form-control-file" name="picture" id="picture" style="width:98%">
+      <br>
+      {% if entry.picture %}
+        <img src="{{ entry.picture.url }}" alt="picture" style="max-width:100%; border-radius: 20px">
+      {% else %}
+        <img src="/static/images/IT_Blogger.png" alt="picture" style="max-width:100%; border-radius: 20px; opacity:0.3">
+      {% endif %}
+    </div>
+    
+    <p class="form-group box_d">
+      <label for="title_id">标题：</label>
+      <input class="form-control" id="title_id" type="text" name="title" placeholder="请输入标题..." value="{{ entry.title }}" autofocus maxlength="200" required size="50px">
+    </p>
+  </div>
+  <div class="col-md-9">
+    <p class="form-group box_d">
+      <label for="text_id">内容：</label>
+        <div class="box_d">
+        {{ form.media }}
+        {{ form.text }}
+        </div>
+    </p>
+    <button name='submit' class="btn btn-primary">保存</button>
+  </div>
+  </form>
+  </div>
+  
+{% endblock content %}
+
+{% block script %}
+  <script>
+    document.title="IT Blogger-编辑博客"
+  </script>
+{% endblock script %}

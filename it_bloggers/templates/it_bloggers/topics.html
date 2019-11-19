@@ -1,0 +1,101 @@
+{% extends "it_bloggers/base.html" %}
+{% load my_filters_and_tags %}
+
+{% block header %}
+  <div class="page-header">
+  <ul class="breadcrumb" style="background:rgba(0,0,0,0.1); margin:10px 20px; padding:10px; border-radius:20px">
+      <span>当前位置：</span>
+      <li><a href="/homepage/">主页</a></li>
+      <li class="active">主题</li>
+  </ul>
+  </div>
+  
+{% endblock header %}
+
+{% block content %}
+  <h1 style="margin-bottom:20px">主题
+    <div style="float:right">
+      <button class="btn btn-info" style="margin-left:10px" 
+        onclick='window.open("{% url 'it_bloggers:entries' %}")'>所有条目
+      </button>
+    </div>
+    <div style="float:right">
+      <button class="btn btn-info" style="margin-left:10px" 
+        onclick="new_topic()">新增主题
+      </button>
+    </div>
+  </h1>
+
+  <table class="table table-hover" style="font-size:20px">
+  <tr style="background-color:rgba(240,248,255,0.3)">
+    <th>序号</th>
+    <th>主题</th>
+    <th>创建日期</th>
+    <th>打开主题</th>
+    <th>删除</th>
+    <th><p style="float:right">多选</p></th>
+  </tr>
+    
+  {% for topic in topics %}
+    <tr style="height: 60px">
+      <td style="padding-top:15px"><small>{{ forloop.counter }}</small></td>
+      <td style="padding-top:15px"><b>{{ topic.text|max_len:'20' }}</b>
+        <div class="mytooltip" style="font-size:15px">
+          <div class="myicon glyphicon glyphicon-pencil" style="margin-left:10px" 
+          onclick="edit_topic({{ topic.id }}, '{{ topic.text|max_len:"10" }}')"></div>
+          <span class="mytooltiptext">重命名</span>
+        </div>
+      </td>
+      <td style="font-size:15px; padding-top:20px">{{ topic.date_added|date:'Y-m-d H:i:s' }}</td>
+      <td style="padding-top:15px"><div class="myicon glyphicon glyphicon-folder-open" style="margin-left:30px" 
+        onclick="window.open('{% url "it_bloggers:entries" %}?topic_id={{ topic.id }}')"></div></td>
+      <td style="padding-top:15px"><div class="myicon glyphicon glyphicon-trash" style="margin-left:10px" 
+      	onclick="confirm_del('{{ topic.text|max_len:'10' }}', {{ topic.id }})"></div></td>
+      <td style="padding-top:15px"><input style="float:right; margin-right:15px" type="checkbox" name="cb" id={{ topic.id }}></td>
+    </tr>
+  {% empty %}
+      <li>您还没有添加任何主题！</li>
+      <br>
+  {% endfor %}
+  </table>
+  
+  <p style="float:right">
+    <button class="btn btn-xs btn-info" onclick="all_check()">全选/清空</button>
+    <button class="btn btn-xs btn-info" onclick="re_check()">反选</button>
+    <button class="btn btn-xs btn-info" id="b1" onclick="confirm_dels()">删除</button>
+  </p>
+  
+  <!-- 页码 -->
+  <div style="text-align: center;">
+    <ul class="pagination">
+      {% if topics.has_previous %}
+        <li><a href="?page=1">&laquo;</a></li>
+        <li><a href="?page={{ topics.previous_page_number }}">&lt;</a></li>
+      {% endif %}
+      {% if topics.previous_page_number|minus:"1" >= 1 %}
+        <li><a href="?page={{ topics.previous_page_number|minus:'1' }}">{{ topics.previous_page_number|minus:"1" }}</a></li>
+      {% endif %}
+      {% if topics.has_previous %}
+        <li><a href="?page={{ topics.previous_page_number }}">{{ topics.previous_page_number }}</a></li>
+      {% endif %}
+      <li class="active"><a>{{ topics.number }}</a></li>
+      {% if topics.has_next %}
+        <li><a href="?page={{ topics.next_page_number }}">{{ topics.next_page_number }}</a></li>
+      {% endif %}
+      {% if topics.next_page_number|add:"1" <= topics.paginator.num_pages %}
+        <li><a href="?page={{ topics.next_page_number|add:'1' }}">{{ topics.next_page_number|add:"1" }}</a></li>
+      {% endif %}
+      {% if topics.has_next %}
+        <li><a href="?page={{ topics.next_page_number }}">&gt;</a></li>
+        <li><a href="?page={{ topics.paginator.num_pages }}">&raquo;</a></li>
+      {% endif %}
+    </ul>
+  </div>
+{% endblock content %}
+
+{% block script %}
+  <script>
+  	document.title="IT Blogger-管理主题"
+    $("#nav3").css({"color":"white"})
+  </script>
+{% endblock script %}

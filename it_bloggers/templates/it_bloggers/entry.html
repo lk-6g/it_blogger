@@ -1,0 +1,172 @@
+{% extends "it_bloggers/base.html" %}
+{% load my_filters_and_tags %}
+
+{% block header %}
+<div class="page-header">
+  <h1 class="col-12 mt-4 mb-4">{{ entry.title }}
+      <!-- 主题 -->
+      <a class="badge ani_b" style="line-height: 1.5; border-radius: 15px"
+       href="/?topic_id={{ entry.topic.id }}" target="_blank">
+      {{ entry.topic.text|max_len:'20' }}</a>
+      <!-- 标签 -->
+      {% for tag in entry.tags.all %}
+        <a class="badge ani_c" style="background:line-height: 0.9; border-radius: 9px; font-weight:500"
+         href="/?tag={{ tag }}" target="_blank">
+        {{ tag.name|max_len:'15' }}</a>
+      {% endfor %}
+  {% if user == entry.owner %}
+  <div style="float:right">
+    <i class="myicon glyphicon glyphicon-trash" id="del_in" onclick="confirm_dele(this, {{ entry.id }}, '{{ entry.title|max_len:'10' }}')" style="font-size:20px"><small>删除文章</small>&nbsp;</i>
+    <i class="myicon glyphicon glyphicon-edit" onclick="window.open('/edit_entry/{{ entry.id }}/')" style="font-size:20px"><small>编辑文章</small></i>
+  </div>
+  {% endif %}
+  </h1>
+</div>
+{% endblock header %}
+
+{% block content %}
+    <div class="row">
+      <div class="col-12 alert alert-info">
+          <a href="/visitor/{{ entry.owner.id }}/" target="_blank">作者：{{ entry.owner }}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <small>发表：{{ entry.date_added|date:'Y-m-d H:i:s' }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</small>
+          <small>更新：{{ entry.date_updated|date:'Y-m-d H:i:s' }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</small>
+          <small>浏览：{{ entry.read_count }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</small>
+          <small>评论：{{ entry.comments.count }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</small>
+          <i style="float:right;" onclick="validate_is_like(
+          	'{% url 'it_bloggers:increase_likes' entry.id %}',
+            {{ entry.id }},{{ entry.likes }})">
+            <span id="likes_text"><i class="glyphicon glyphicon-heart"></i></span>
+            <span id="likes_number">{{ entry.likes }}</span>
+          </i>
+      </div>
+        
+      <!-- 文章内容 -->
+      <div class="col-12">
+        <p>{{ entry.text|mk_filter|safe }}</p>
+      </div>
+      
+      <hr>
+      <ul class="pager">
+        {% if pre_entry %}
+          <li class="previous"><a href="/entry/{{ pre_entry.id }}/">&larr; 上一篇：
+            <small>{{ pre_entry.title|max_len:'20' }}</small>
+          </a></li>
+        {% else %}
+          <li class="previous disabled"><a>&larr; 上一篇</a></li>
+        {% endif %}
+        {% if next_entry %}
+          <li class="next"><a href="/entry/{{ next_entry.id }}/">
+            <small>{{ next_entry.title|max_len:'20' }}</small>：下一篇 &rarr;
+          </a></li>
+        {% else %}
+          <li class="next disabled"><a>下一篇 &rarr;</a></li>
+        {% endif %}
+      </ul>
+    </div>
+    
+    <!-- 发表评论 -->
+    <hr>
+    {% if user.is_authenticated %}
+      <div>
+        <form action="{% url 'comments:new_comment' entry.id %}" method="POST">
+        {% csrf_token %}
+          <div class="alert alert-info box_b" data-toggle="collapse" data-target="#comment_form">
+            <strong>我也要发言...<small style="float:right">点此展开</small></strong>
+          </div>
+          <div class="collapse out" id="comment_form">
+            <div class="box_e">
+              {{ comment_form.media }}
+              {{ comment_form.text }}
+            </div>
+          <!-- 提交按钮 -->
+          <br>
+          <button type="submit" class="btn btn-primary ">发送</button>        
+          </div>        
+        </form>
+      </div>
+      <br>
+    {% else %}
+      <br>
+      <div class="form-group panel panel-info">
+        <div style="cursor:pointer" class="panel-heading">
+          <p class="panel-title" onclick='window.open("{% url 'users:login' %}")'>请  “ 登录 ” 后回复</p>
+        </div>
+      </div>
+      <br>
+    {% endif %}
+    
+    <!-- 显示评论 -->
+    <div class="panel panel-info">
+    {% load mptt_tags %}
+    <div class="panel-heading">
+      <h4>共有{{ comments.count }}条评论</h4>
+    </div>
+    <div class="row panel-body">
+    <!-- 遍历树形结构 -->
+    {% recursetree comments %}
+      <!-- 给 node 取个别名 comment -->
+      {% with comment=node %}
+      <div id="comment_elem_{{ comment.id }}" class="col-md-12" {% if comment.reply_to %}style="padding-left:5%"{% endif %}>
+        <p>
+          {% if not comment.reply_to %}
+          <a href="/visitor/{{ comment.owner.id }}/" target="_blank" style="text-decoration:none">
+            {% if comment.owner.profile.avatar %}
+            <img src="{{ comment.owner.profile.avatar.url }}" alt="picture" style="max-width:30px; max-height:30px; border-radius: 50%">
+            {% else %}
+            <img src="/static/images/default_avatar.png" alt="picture" style="max-width:30px; max-height:30px; border-radius: 50%">
+            {% endif %}
+            <strong style="color: pink">{{ comment.owner }}</strong> ：
+          </a>
+          {% else %}
+          <a href="/visitor/{{ comment.owner.id }}/" target="_blank" style="text-decoration:none">
+            <strong style="color: pink">{{ comment.owner }}</strong>
+          </a>
+          <span style="color: cornflowerblue">&nbsp;&nbsp;@&nbsp;&nbsp;</span>
+          <a href="/visitor/{{ comment.reply_to.id }}/" target="_blank" style="text-decoration:none">
+            <strong style="color: pink">{{ comment.reply_to }}</strong> ：
+          </a>
+          {% endif %}
+        </p>
+        <div style="padding:10px">{{ comment.text|safe }}</div>
+        <div style="padding:0 0 10px 84%">
+          <span style="color: gray">{{ comment.date_added|date:"Y-m-d H:i" }}&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          <!-- 加载 modal 的按钮 -->
+          {% if user.is_authenticated %}
+          <button type="button" class="btn btn-warning btn-xs" 
+          onclick="load_ch({{ comment.id }})">回复</button>
+          {% else %}
+          <a class="btn btn-light btn-xs text-muted" href="{% url 'users:login' %}" target="_blank"> 回复</a>
+          {% endif %}
+        </div>
+        <!-- 多级评论预留块 -->
+        <div style="border:1px; border-bottom-style:dotted; border-color:rgba(0,0,0,0.2); margin-bottom:15px; padding-bottom:15px">
+          <form id="load_{{ comment.id }}" class="on_off" action="/comments/new_comment/{{ entry.id }}/{{ comment.id }}/" method="POST"></form>
+        </div>
+
+        {% if not comment.is_leaf_node %}
+          <div class="children">{{ children }}</div>
+        {% endif %}
+      </div>
+      {% endwith %}
+    {% endrecursetree %}
+</div>
+
+{% endblock content %}
+
+{% block script %}
+  <script>
+  	document.title="IT Blogger-{{ entry.title|max_len:'10' }}"
+	//取出 LocalStorage 中的数据
+	let storage = window.localStorage;
+	const storage_str_data = storage.getItem("my_blog_data");
+	let storage_json_data = JSON.parse(storage_str_data);
+	const check_likes = check_status(storage_json_data, {{ entry.id }});
+	if (check_likes) {
+		$('span#likes_number').css('color', 'red');
+		$('span#likes_text').css('color', 'red');
+	}
+  </script>
+  <link rel="stylesheet" type="text/css" href="/static/css/monokai.css">
+  <script src="/static/ckeditor/ckeditor/plugins/prism/lib/prism/prism_patched.min.js"></script>
+  <link rel="stylesheet" href="/static/css/prism.css">
+{% endblock script %}

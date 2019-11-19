@@ -1,0 +1,246 @@
+body {
+	background-image:url('/static/images/background.png');
+	background-repeat:repeat-x;
+	}
+	
+/*页脚*/
+.myfooter {
+    font-size: 12px;
+    color: #999;
+    margin: 0 auto;
+    width: auto;
+    text-align: center;
+    padding: 80px 0 0 0;
+}
+	
+/* 返回顶部按钮 */
+.toTop-arrow {
+	width: 35px;
+   	height: 35px;
+	border: 0;
+	border-radius: 50%;
+	opacity: 0.7;
+	background-image: url('/static/images/return_top.png');
+	background-repeat: no-repeat;
+	cursor: pointer;
+	position: fixed;
+	right: 2rem;
+	bottom: 2rem;
+	display: none;
+	}
+
+/* 取消点击按钮时的聚焦 */
+.toTop-arrow:focus {
+	outline: none;
+	}
+	
+/*下拉菜单*/
+.mydropdown {
+	position: relative;
+	diplay: inline-block;
+	}
+	
+.mydropdown-content {
+	visibility: hidden;
+	position: absolute;
+	left: 0%;
+	bottom: 5px;
+	min-width: 100%;
+	background-color: #555;
+	color: white;
+	padding: 2px 2px 2px 16px;
+	box-shadow: 3px 3px 3px 3px rgba(0,0,0,0.5);
+	z-index: 1;
+	opacity: 0;
+	transition: visibility 1s, opacity 1s, bottom 1s;
+	}
+	
+.mydropdown:hover .mydropdown-content {
+	opacity: 1;
+	bottom: -10px;
+	visibility: visible;
+	}
+	
+/*冒泡工具*/
+.mytooltip {
+	display: inline-block;
+	position: relative;
+	}
+	
+.mytooltip .mytooltiptext {
+	visibility: hidden;
+	width: 80px;
+	background-color: black;
+	color: white;
+	font-size: 15px;
+	text-align: center;
+	padding: 5px;
+	border-radius: 5px;
+	position: absolute;
+	z-index: 1;
+	bottom: 150%;
+	left: -10%;
+	opacity: 0;
+	transition: opacity 1s;
+	}
+	
+.mytooltip:hover .mytooltiptext {
+	opacity: 1;
+	visibility: visible;
+	}
+	
+/*自定义图标样式*/
+.myicon {
+	color: BurlyWood;
+	cursor: pointer;
+}
+
+.myicon:hover {
+	text-decoration:none;
+}
+
+.box_a{
+	width: 100%;
+    box-shadow: 2px 2px 2px 2px rgba(0,0,0,0.1);
+    background: rgba(240,248,255,0.3);
+    padding: 16px 16px;
+    margin-bottom: 12px;
+    margin-top: 0;
+    border-radius:5px;
+    transition: box-shadow 0.3s;
+}
+
+.box_a:hover{
+	box-shadow: 3px 3px 3px 3px rgba(0,0,0,0.3);
+}
+
+.box_b{
+	cursor:pointer;
+	margin-bottom:0;
+	border-radius: 4px 4px 0 0;
+}
+
+.box_c{
+	background-color:rgba(240,248,255,0.5);
+	border-radius:6px;
+	box-shadow: 3px 3px 3px 3px rgba(0,0,0,0.1);
+	height:600px;
+	overflow:auto;
+}
+/*滚动条样式*/
+.box_c::-webkit-scrollbar {/*滚动条整体样式*/
+	width: 5px;     /*高宽分别对应横竖滚动条的尺寸*/
+	height: 5px;
+}
+.box_c::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+	border-radius: 5px;
+	-webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+	background: rgba(0,0,0,0.2);
+}
+.box_c::-webkit-scrollbar-track {/*滚动条里面轨道*/
+	-webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+	border-radius: 0;
+	background: rgba(0,0,0,0.1);
+}
+
+.box_d{
+	box-shadow: 2px 2px 2px 2px rgba(0,0,0,0.1);
+	background: rgba(248,248,248,1);
+	padding: 15px 15px;
+	border-radius:5px;
+	transition: box-shadow 0.3s;
+}
+
+.box_d:hover{
+	box-shadow: 3px 3px 3px 3px rgba(0,0,0,0.3);
+}
+
+.box_e{
+	background: rgba(248,248,248,1);
+	padding: 15px 15px;
+	border-radius:0 0 5px 5px;
+}
+
+/* 动画 */
+.ani_a{
+	padding_left:0px;
+	text-shadow: 2px 2px rgba(0,0,0,0.2);
+	font-size:17px;
+    transition: font-size 0.3s, text-shadow 0.3s, padding-left 0.3s;
+}
+
+.ani_a:hover{
+	padding-left:10px;
+	text-decoration:none;
+	font-size:18px;
+	text-shadow: 3px 3px rgba(0,0,0,0.3);
+}
+
+.ani_b{
+	background:LightSkyBlue;
+    transition: background 0.3s;
+}
+
+.ani_b:hover{
+	background:IndianRed;
+}
+
+.ani_c{
+	background:LightSteelBlue;
+    transition: background 0.3s;
+}
+
+.ani_c:hover{
+	background:IndianRed;
+}
+
+.ani_img_def{
+	display:block;
+	width:90%;
+	heigth:100px;
+	object-fit:cover;
+	opacity:0.3;
+	border-radius: 20px;
+	transition: width 0.3s, opacity 0.3s;
+}
+
+.ani_img_def:hover{
+	opacity:0.8;
+	width:103%;
+}
+
+.ani_img{
+	display:block;
+	width:100%;
+	heigth:100px;
+	object-fit:cover;
+	border-radius: 20px;
+	transition: width 0.3s;
+}
+
+.ani_img:hover{
+	width:103%;
+}
+
+.pre_img{
+    border: 1px solid #ccc;
+    float: left;
+}
+
+.pre_img img {
+    width: 150px;
+    height: auto;
+}
+
+.pre_img div {
+	background:rgba(119,136,153,0.3);
+    padding: 5px;
+    text-align: center;
+}
+
+.search_icon{
+	background-image:url('/static/images/searchicon.png');
+	background-repeat: no-repeat;
+	background-position: 10px 6px; 
+	padding-left:36px;
+}

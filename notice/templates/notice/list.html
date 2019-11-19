@@ -1,0 +1,74 @@
+{% extends "it_bloggers/base.html" %}
+{% load my_filters_and_tags %}
+
+{% block header %}
+  <div class="page-header">
+    <h2>通知
+      <a style="float:right;" class="myicon glyphicon glyphicon-tags" 
+        href='{% url "notice:update" %}'><small> 全部标记已读</small></a>
+    </h2>
+  </div>
+{% endblock header %}
+
+{% block content %}
+<div class="container">
+    <!-- 未读通知列表 -->
+    <div class="row mt-2 ml-4">
+        {% if notices %}
+        <h4>未读通知消息</h4>
+        <ul class="list-group">
+            {% for notice in notices %}
+              {% if notice.target %}
+                <li class="list-group-item" id="notice_link">
+                    <a href="{% url "notice:update" %}?entry_id={{ notice.target.id }}&notice_id={{ notice.id }}#comment_elem_{{ notice.action_object.id }}" target="_blank">
+                      <span style="color: #5897fb;">{{ notice.actor.username|max_len:'10' }}</span> 在 
+                      <span style="color: #01a252;">{{ notice.target.title|max_len:'50' }}</span> {{ notice.verb }}。
+                    </a>
+                    <span style="float:right">{{ notice.timestamp|date:"Y/m/d H:i" }}</span>
+                </li>
+              {% else %}
+                <li class="list-group-item" id="notice_link">
+                  <a>博客或评论已被所有者删除！</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    
+    <!-- 全部通知列表 -->
+    <div class="row mt-2 ml-4">
+        <h4>全部通知消息</h4>
+        <ul class="list-group">
+            {% for notice in all_notices %}
+              {% if notice.target %}
+                <li class="list-group-item" id="notice_link">
+                    <a href="{% url "notice:update" %}?entry_id={{ notice.target.id }}&notice_id={{ notice.id }}#comment_elem_{{ notice.action_object.id }}" target="_blank">
+                      <span style="color: #5897fb;">{{ notice.actor.username|max_len:'10' }}</span> 在 
+                      <span style="color: #01a252;">{{ notice.target.title|max_len:'50' }}</span> {{ notice.verb }}。
+                    </a>
+                    <span style="float:right">{{ notice.timestamp|date:"Y/m/d H:i" }}</span>
+                </li>
+              {% else %}
+                <li class="list-group-item" id="notice_link">
+                  <a>博客或评论已被所有者删除！</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block script %}
+  <style>
+    #notice_link a:visited {
+        color: lightgrey;
+    }
+  </style>
+  <script>
+  	document.title="IT Blogger-消息通知"
+    $("#nav5").css({"color":"white"})
+  </script>
+{% endblock script %}

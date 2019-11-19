@@ -1,0 +1,71 @@
+{% extends "it_bloggers/base.html" %}
+
+{% block header %}
+  <h2>注册账号</h2>
+{% endblock header %}
+
+{% block content %}
+  <div class="row">
+  <div class="col-md-5" style="margin-top:50px; line-height:150%">
+  <form method='post' action="{% url 'users:register' %}" class="form">
+    {% csrf_token %}
+    <div class="form-group">
+      <label class="control-label" for="id_username">用户名</label>
+      <input type="text" name="username" maxlength="150" autofocus="" class="form-control" placeholder="请输入用户名..." title="Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only." required="" id="id_username">
+      <div class="help-block">150个字符以内，字母、数字、和 特殊符号 @/./+/-/_.</div>
+    </div>
+    <div class="form-group">
+      <label class="control-label" for="id_password1">密码</label>
+      <input type="password" name="password1" class="form-control" placeholder="请输入密码..." title="Your password can&amp;#39;t be too similar to your other personal information.Your password must contain at least 8 characters.Your password can&amp;#39;t be a commonly used password.Your password can&amp;#39;t be entirely numeric." required="" id="id_password1">
+      <div class="help-block">
+        <ul>
+          <li>您的密码不可太过简单，例如包含连续数字123456等。</li>
+          <li>您的密码不能与您的其他个人信息太相似。</li>
+          <li>您的密码必须包含至少8个字符。</li>
+          <li>您的密码不能完全是数字。</li>
+        </ul>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label" for="id_password2">再次输入密码</label>
+      <input type="password" name="password2" class="form-control" placeholder="请再次输入密码..." title="Enter the same password as before, for verification." required="" id="id_password2">
+      <div class="help-block">输入与之前相同的密码，以进行验证。</div>
+    </div>
+    <div class="form-group">
+      <label class="control-label" for="id_email">邮箱</label>
+      <input type="email" name="email" class="form-control" placeholder="请输入邮箱..." title="Enter the email to reset your password." required="" id="id_email">
+      <div class="help-block">预留账号邮箱，请谨慎输入，以用来重置密码。</div>
+    </div>
+    <div class="form-group">
+      <button name="submit" class="btn btn-primary">提交</button>
+      <a style="float:right; padding-top:16px; text-decoration:underline" href="{% url 'users:login' %}">已有账号，登录</a>
+    </div>
+    <input type="hidden" name="next" value="{% url 'it_bloggers:index' %}"/>
+  </form>
+  </div>
+  
+  <div class="col-md-2"></div>
+  
+  <div class="col-md-5" style="margin-top:50px; line-height:200%">
+    <p style="text-indent:20px">非常感谢您浏览本站，可能您只是偶然止步于此，但是在万千互联网站中您偶然与本站相识，也是一种缘分，我是一个互联网爱好者，本站纯属个人兴趣制作，无任何利益成分，如果您也对互联网开发感兴趣的话，我们可以成为很好的朋友！</p>
+    <div style="margin-top:50px">
+     <div class="pre_img">
+      <img src="/static/images/WeChat.png">
+      <div>微信</div>
+     </div>
+     <div class="pre_img" style="float:right">
+      <img src="/static/images/QQ.jpg">
+      <div>QQ</div>
+     </div>
+    </div>
+  </div>
+  </div>
+  
+{% endblock content %}
+
+{% block script %}
+  <script>
+    document.title="IT Blogger-注册"
+    $("#nav6").css({"color":"white", "background":"rgba(0,0,0,0.2)"})
+  </script>
+{% endblock script %}

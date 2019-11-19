@@ -27,7 +27,7 @@
 </div>
 <div class="col-md-10">
   {% if topic.id != "None" %}
-    <div id="t1" lang="{{ topic.id }}">
+    <div id="t1" data-getid="{{ topic.id }}">
       {% include './entries_content.html' %}
     </div>
   {% else %}
@@ -54,7 +54,7 @@
   	
 	//条目页面侧边栏选中变色
 	//这段js需放后面，因为这段代码如果执行失败，会阻碍后续代码执行
-	var topicId = document.getElementById("t1").lang;
+	var topicId = document.getElementById("t1").dataset.getid; //或者使用 getAttribute("data-getid");
 	document.getElementById(topicId).style.background = "LightSteelBlue";
 	document.getElementById(topicId).style.color = "white";
   </script>

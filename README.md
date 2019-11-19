@@ -21,4 +21,5 @@
 3. 时间差原因，部署到heroku最好选择夜间11、12点之后，不然会很难登录到heroku；
 4. 本项目集成了heroku部署的settings设置，具体部署过程，参见官方文档 https://devcenter.heroku.com/articles/getting-started-with-python ；
 
-如遇问题，可联系本人，邮箱：lk6g@foxmail.com
+访问 http://itblogger.herokuapp.com 查看项目效果；
+如遇问题，可联系本人，邮箱：lk6g@foxmail.com ;
